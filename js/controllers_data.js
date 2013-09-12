@@ -57,6 +57,9 @@ App.DataExportController = Ember.ArrayController.extend({
 	    hash = CryptoJS.SHA512(hash);
 	}
 
+	// fix comma syntax
+	raw = raw.replace(/,\],/g, '],');
+	// console.log("raw: %s", raw);
 	var cr  = CryptoJS.AES.encrypt(escape(raw), hash.toString(CryptoJS.enc.Base64));
 
 	$('#rawdata').text(cr);
@@ -66,10 +69,9 @@ App.DataExportController = Ember.ArrayController.extend({
 	var mac = CryptoJS.HmacSHA512(crypted, hash.toString(CryptoJS.enc.Base64));
 	var signedcrypted = mac.toString(CryptoJS.enc.Base64).substring(0,86) + crypted;
 
-	console.log("raw: %s", raw);
-	console.log("cr: %s", crypted);
-	console.log("pass: <%s>, hash: <%s>", pass, hash.toString(CryptoJS.enc.Base64));
-	console.log("mac: %s",  mac.toString(CryptoJS.enc.Base64).substring(0,86));
+	// console.log("cr: %s", crypted);
+	// console.log("pass: <%s>, hash: <%s>", pass, hash.toString(CryptoJS.enc.Base64));
+	// console.log("mac: %s",  mac.toString(CryptoJS.enc.Base64).substring(0,86));
 
 	var block = '';
 	var c = 1;
@@ -106,7 +108,14 @@ App.UploadFileView = Ember.TextField.extend({
             var reader = new FileReader();
             var that = this;
             reader.onload = function(e) {
-		var fileToUpload = e.srcElement.result;
+		var targ;
+		if (!e) var e = window.event;
+		if (e.target) targ = e.target;
+		else if (e.srcElement) targ = e.srcElement;
+		if (targ.nodeType == 3) // defeat Safari bug
+		    targ = targ.parentNode;
+
+		var fileToUpload = targ.result;
 		UploadedImport = decode64(fileToUpload.split(',')[1]);
             }
             reader.readAsDataURL(input.files[0]);
@@ -128,6 +137,7 @@ App.DataImportController = Ember.ObjectController.extend({
 
 	    try {
 		var raw = '';
+		//console.log("up: %o", UploadedImport);
 		if(UploadedImport) {
 		    //console.log("using upload");
 		    raw = UploadedImport;
@@ -159,7 +169,7 @@ App.DataImportController = Ember.ObjectController.extend({
 		var b64mac = b64.substring(0,86) + '==';
 		var b64cr  = b64.substring(86);
 
-		console.log("b64mac: %s", b64mac);
+		// console.log("b64mac: %s", b64mac);
 
 		// create the password hash
 		var hash = CryptoJS.SHA512(pass);
@@ -169,155 +179,31 @@ App.DataImportController = Ember.ObjectController.extend({
 
 		// verify the mac
 		var mac = CryptoJS.HmacSHA512(b64cr, hash.toString(CryptoJS.enc.Base64));
-		console.log("mac: %s", mac.toString(CryptoJS.enc.Base64));
+		// console.log("mac: %s", mac.toString(CryptoJS.enc.Base64));
 		if(mac.toString(CryptoJS.enc.Base64) !== b64mac) {
 		    throw 'Authentication MAC verification failed, rejecting manipulated encrypted data';
 		}
 
 		// now if we're her, decrypt the data
 		var json = decryptimport(hash.toString(CryptoJS.enc.Base64), b64cr);
-		console.log("pass: <%s>, hash: <%s>, hash: %o", pass, hash.toString(CryptoJS.enc.Base64), hash);
-		console.log("json: %s", json);
+		// console.log("pass: <%s>, hash: <%s>, hash: %o", pass, hash.toString(CryptoJS.enc.Base64), hash);
+		// console.log("json: %s", json);
 
 		// make it an obj
-		var importobj = JSON.parse(json); // FIXME: SyntaxError: Unexpected token ], liegt am Komma nach dem letzten item
-		console.log("imported json: %o", importobj);
-	    }
- 	    catch (e) {
-		console.log("decryption exception: %o", e);
-		this.set('clear', translate('_error_decrypt') + " (" + e + ")");
-	    }
-	}
-	else {
-	    // no password given
-	    this.set('isEditing', true);
-	    this.set('errors', validated);
-	    this.set('clear', translate('_error_decrypt'));
-	}
-    },
+		var importobj = JSON.parse(json);
+		// console.log("imported json: %o", importobj);
 
-    doneEditingXXX: function() {
-	var validated =  this.get('model').validate();
-
-	// decrypt and reload models
-	if(validated.valid) {
-	    this.set('isEditing', false);
-	    pass = this.get('password');
-
-	    try {
-		var entries = '';
-		if(UploadedImport) {
-		    //console.log("using upload");
-		    entries = UploadedImport.match(/[^\r\n]+/g);
-		    UploadedImport = null;
-		}
-		else if (this.get('importdata')) {
-		    //console.log("using input");
-		    entries = this.get('importdata').match(/[^\r\n]+/g);
+		if(json) {
+		    // suck it in
+		    ImportJSON(importobj, pass);
+		    this.set('clear', translate('_importdone'));
 		}
 		else {
-		    throw 'No import data provided';
+		    throw 'decrypted variable $json doesnt contain anything, weird';
 		}
-		//console.log("got %d entries: %o", entries.length, entries);
-		var json    = '';
-		for (var i = 0; i < entries.length; i++) {
-		    var importline = entries[i].split(',');
-		    //console.log("splitted: %o", importline);
-		    if(importline[0] === 'asset') {
-			//console.log("import asset");
-			json = decryptimport(pass, importline[1]);
-			if(json) {
-			    //console.log("evaluating: %s", json);
-			    var obj = JSON.parse(json);
-			    //console.log("code: %o", obj);
-			    var exists = App.Asset.all().some(function(asset) {
-				return asset.get('id') === obj.id;
-			    });
-			    if(exists) {
-				/* update
-				   FIXME: Updating doesn't work yet for some unknown reason
-				App.Asset.find(obj.id).then(function(asset) {
-				    asset.set("name", obj.name);
-				    asset.set("uri", obj.uri);
-				    asset.set("login", obj.login);
-				    asset.set("password", obj.password);
-				    asset.set("mail", obj.mail);
-				    asset.set("successor", App.Successor.find(obj.successor));
-				    asset.set("order", App.Order.find(obj.order));
-				    asset.set("notes", obj.notes);
-				});
-				*/
-			    }
-			    else {
-				// create
-				var asset =  App.Asset.createRecord({
-				    id:        obj.id,
-				    name:      obj.name,
-				    uri:       obj.uri,
-				    login:     obj.login,
-				    password:  obj.password,
-				    mail:      obj.mail,
-				    successor: App.Successor.find(obj.successor),
-				    order:     App.Order.find(obj.order),
-				    notes:     obj.notes
-				});
-			    }
-			}
-			else {
-			    throw 'decrypted variable $json doesnt contain anything, weird';
-			}
-		    }
-		    else if (importline[0] === 'successor') {
-			console.log("import successor");
-			json = decryptimport(pass, importline[1]);
-			console.log("evaluating: %s", json);
-			if(json) {
-			    var obj = JSON.parse(json);
-			    if(obj.id !== "0") {
-				var exists = App.Successor.all().some(function(successor) {
-				    return successor.get('id') === obj.id;
-				});
-				if(! exists) {
-				    var successor =  App.Successor.createRecord(obj);
-				}
-			    }
-			    else {
-				//console.log("ignoring id 0");
-			    }
-			}
-			else {
-			    throw 'decrypted variable $json doesnt contain anything, weird';
-			}
-		    }
-		    else if (importline[0] === 'self') {
-			console.log("import self");
-			json = decryptimport(pass, importline[1]);
-			console.log("evaluating: %s", json);
-			if(json) {
-			    var obj = JSON.parse(json);
-			    var self = App.Self.find(0).then(function(self) {
-				//console.log("didLoad on self fired, putting %o with pass %s", obj, pass);
-				self.set('name',     obj.name);
-				self.set('birth',    obj.birth);
-				self.set('address',  obj.address);
-				self.set('password', pass);
-			    });
-			}
-			else {
-			    throw 'decrypted variable $json doesnt contain anything, weird';
-			}
-		    }
-		    /*
-		      else {
-		      console.log("import unknown");
-		      }
-		    */
-		}
-	        App.store.commit();
-		this.set('clear', translate('_importdone'));
 	    }
-	    catch (e) {
-		console.log("decryption exception: %o", e);
+ 	    catch (e) {
+		// console.log("decryption exception: %o", e);
 		this.set('clear', translate('_error_decrypt') + " (" + e + ")");
 	    }
 	}
@@ -335,3 +221,77 @@ App.DataImportController = Ember.ObjectController.extend({
 	this.set('password', '');
     }
 });
+
+function ImportJSON(json, pass) {
+    // start with self
+    var self = App.Self.find(0).then(function(self) {
+	self.set('name',     json.self.name);
+	self.set('birth',    json.self.birth);
+	self.set('address',  json.self.address);
+	self.set('password', pass);
+    });
+
+
+    // now the successors
+    $.each(json.successors, function(index, obj){
+	if(obj.id !== "0") {
+	    var exists = App.Successor.all().some(function(successor) {
+		return successor.get('id') === obj.id;
+	    });
+	    if(exists) {
+		// Update
+		App.Successor.find(obj.id).then(function(successor) {
+		    //console.log("updating successor %o", obj);
+		    successor.set("name",     obj.name);
+		    successor.set("address",  obj.address);
+		    successor.set("birth",    obj.birth);
+		    successor.set("name2",    obj.name2);
+		    successor.set("address2", obj.address2);
+		    successor.set("birth2",   obj.birth2);
+		});
+	    }
+	    else {
+		var successor =  App.Successor.createRecord(obj);
+	    }
+	}
+    });
+
+    // and the assets
+    $.each(json.assets, function(index, obj){
+	var exists = App.Asset.all().some(function(asset) {
+	    return asset.get('id') === obj.id;
+	});
+	if(exists) {
+	    /// Update
+	    App.Asset.find(obj.id).then(function(asset) {
+		//console.log("updating asset %o", obj);
+		asset.set("name",      obj.name);
+		asset.set("uri",       obj.uri);
+		asset.set("login",     obj.login);
+		asset.set("password",  obj.password);
+		asset.set("mail",      obj.mail);
+		asset.set("successor", App.Successor.find(obj.successor));
+		asset.set("order",     App.Order.find(obj.order));
+		asset.set("notes",     obj.notes);
+		App.store.commit(); // we do update it here to avoid rootState.loaded.updated.uncommitted
+	    });
+	}
+	else {
+	    // create
+	    var asset =  App.Asset.createRecord({
+		id:        obj.id,
+		name:      obj.name,
+		uri:       obj.uri,
+		login:     obj.login,
+		password:  obj.password,
+		mail:      obj.mail,
+		successor: App.Successor.find(obj.successor),
+		order:     App.Order.find(obj.order),
+		notes:     obj.notes
+	    });
+	}
+    });
+
+    App.store.commit();
+}
+

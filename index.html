@@ -22,7 +22,7 @@
           <li>{{#linkTo 'assets'}}{{loc _assets}}{{/linkTo}}</li>
 	  <li>{{#linkTo 'testament'}}{{loc _testament}}{{/linkTo}}</li>
 	  <li>{{#linkTo 'data'}}{{loc _data}}{{/linkTo}}</li>
-	  <li>{{#linkTo 'about'}}about{{/linkTo}}</li>
+	  <li>{{#linkTo 'about'}}{{loc _aboutmenu}}{{/linkTo}}</li>
         </ul>
 	<span class="pull-right">digiproof version {{VERSION}}</span>
       </div>
@@ -35,10 +35,8 @@
     <div class="row-fluid">
       <div class="span4">
 	<div class="well">
-	  {{controller}}
-	  <span class="label label-info popup-marker" data-content="{{popup.login.title}}" data-original-title="{{popup.login.help}}">?</span>
-	  <span class="badge badge-success popup-marker" data-content="hilfetext III" data-original-title="Kurzhilfe III">?</span>
-         </div>
+	  {{loc _about}}
+        </div>
       </div>
     </div>
   </script>
@@ -709,21 +707,15 @@
    <h4>{{loc _export}}</h4>
    {{#if self.password}}
    <p>{{loc _exporthelp}}</p>
-   <div id="rawjson" style="display: none">
+   <div id="rawjson" style="display: none"><pre>
      {
-       "successors": [
-     {{#each successor in successors}}
-       {{successor.toJson}},
-     {{/each}}
-        ],
-        "assets": [
-     {{#each asset in assets}}
-        {{asset.toJson}},
-     {{/each}}
-        ],
+       "successors": [{{#each successor in successors}}
+       {{successor.toJson}},{{/each}}],
+        "assets": [{{#each asset in assets}}
+        {{asset.toJson}},{{/each}}],
         "self": {{self.toJson}}
      }
-   </div>
+   </pre></div>
    <div id="rawdata" style="display: none"></div>
    <div id="rawp" style="display: none">{{self.password}}</div>
    <button class="btn btn-primary btn-default" {{action download}}>{{loc _download}}</button>

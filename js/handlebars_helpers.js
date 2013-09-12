@@ -40,16 +40,3 @@ Ember.Handlebars.registerBoundHelper('date', function(date) {
     return moment(date).format('LL');
 });
 
-Ember.Handlebars.registerBoundHelper('encrypt', function(cleartext) {
-    pass = App.Self.find(0).get('password');
-    if(pass) {
-	var enpass = CryptoJS.SHA512(pass).toString(CryptoJS.enc.Base64);
-	//console.log("pass: %s, enpass: %s", pass, enpass);
-	var cr = CryptoJS.AES.encrypt(escape(cleartext), enpass);
-	return cr;
-	
-    }
-    else {
-	return "Failed to encrypt, not password set";
-    }
-});

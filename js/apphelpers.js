@@ -17,12 +17,7 @@ function hex2a(hex) {
     return str;
 }
 
-function decryptimportOLD(pass, data) {
-    var enpass = CryptoJS.SHA512(pass).toString(CryptoJS.enc.Base64);
-    var clear = CryptoJS.AES.decrypt(data, enpass);
-    return unescape(hex2a(clear.toString()));
-}
-
+// decrypt data
 function decryptimport(hash, data) {
     var clear = CryptoJS.AES.decrypt(data, hash);
     return unescape(hex2a(clear.toString()));

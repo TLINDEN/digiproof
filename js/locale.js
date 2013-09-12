@@ -110,7 +110,10 @@ window.locale = {
 	"_pop_successor": "Select a legal successor. You may use the default in which case the person selected by succesion or "
 	    +"your general testament would receive this orders. Or enter a legal successor and select it here.",
 	"_pop_order": "Select how your successor has to manage the network asset. You may add complemental informations "
-	+"into the notes field below."
+	    +"into the notes field below.",
+	"_aboutmenu": "About Digiproof",
+	"_about": "This is DigiProof, a JavaScript App to create a digital testament by Thomas Linden. Copyright (c) 2013. "
+	    +"Licensed under the terms of the General Public License Version 2."
     },
 
     "de": {
@@ -227,7 +230,10 @@ window.locale = {
 	    +"regulärer Erbe (bestimmt durch gesetzliche Erbfolge oder anderweitig durch Testament) diese Anweisungen erhalten. "
 	    +"Oder Sie geben einen speziellen Rechtsnachfolger ein und wählen diesen hier aus.",
 	"_pop_order": "Bestimmen Sie, wie Ihr Rechtsnachfolger mit dem Netzwerkaccount umgehen soll. Sie können im Notizfeld "
-	    +"dazugehörige Ergänzungen hinzufügen."
+	    +"dazugehörige Ergänzungen hinzufügen.",
+	"_aboutmenu": "Über Digiproof",
+	"_about": "Dies ist DigiProof, eine Javascript App zum Erstellen eines digitalen Testaments von Thomas Linden. Copyright (c) 2013. "
+	    +"Veröffentlicht unter der General Public License Version 2."
     }
 };
 
