@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Digital Testament App</title>
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/bootstrap.css" media="all">
+  <link rel="stylesheet" href="css/bootstrap-fileupload.css" media="all">
+  <link rel="stylesheet" href="css/style.css">  
+</head>
+<body>
+
+
+
+  <script type="text/x-handlebars">
+    <div class="navbar hidden-print">
+      <div class="navbar-inner">
+        <a class="brand" href="#">DigiProof</a>
+        <ul class="nav">
+	  <li>{{#linkTo 'self'}}{{loc _self}}{{/linkTo}}</li>
+	  <li>{{#linkTo 'successors'}}{{loc _successors}}{{/linkTo}}</li>
+          <li>{{#linkTo 'assets'}}{{loc _assets}}{{/linkTo}}</li>
+	  <li>{{#linkTo 'testament'}}{{loc _testament}}{{/linkTo}}</li>
+	  <li>{{#linkTo 'data'}}{{loc _data}}{{/linkTo}}</li>
+	  <li>{{#linkTo 'about'}}about{{/linkTo}}</li>
+        </ul>
+	<span class="pull-right">digiproof version {{VERSION}}</span>
+      </div>
+    </div>
+    {{outlet}}
+  </script>
+
+
+  <script type="text/x-handlebars" id="about">
+    <div class="row-fluid">
+      <div class="span4">
+	<div class="well">
+	  {{controller}}
+	  <span class="label label-info popup-marker" data-content="{{popup.login.title}}" data-original-title="{{popup.login.help}}">?</span>
+	  <span class="badge badge-success popup-marker" data-content="hilfetext III" data-original-title="Kurzhilfe III">?</span>
+         </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" id="my-popover-content">
+    <p>tpl help</p>
+  </script>
+
+  <script type="text/x-handlebars" id="index">
+    <div class="hero-unit">
+      <div class="row-fluid">
+	<div class="span4">
+	  <h4>{{loc _welcome}}</h4>
+	  <p>{{loc _intro}}</p>
+	  <p><img class="addlogo" src="" alt="" /></p>
+	</div>
+	<div class="span4">
+	  <h4>{{loc _fill}}</h4>
+	  <ol>
+	    <li>{{loc _fill_self}}<br/>
+	        {{#linkTo 'self'}}{{loc _enterself}}{{/linkTo}}
+	    </li>
+	    <li>{{loc _fill_successor}}<br/>
+	        {{#linkTo 'successors'}}{{loc _entersuccessor}}{{/linkTo}}
+	    </li>
+	    <li>{{loc _fill_asset}}<br/>
+	        {{#linkTo 'assets'}}{{loc _enterasset}}{{/linkTo}}
+	    </li>
+	  </ol>
+	</div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" id="assets">
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3 bs-docs-sidebar">
+	  <ul class="nav nav-list  bs-docs-sidenav">
+	    <li class="nav-header"><h4>{{loc _assets}} {{#linkTo 'assets.new'}}<span class="addicon">&nbsp;<!--[if IE]>{{loc _add}}<![endif]--></span>{{/linkTo}}</h4></li>
+	    {{#each model}}
+	      {{#view App.NavView}}{{#linkTo 'assets.asset' this}}{{name}}{{/linkTo}}{{/view}}
+	    {{/each}}
+	  </ul>
+        </div>
+        <div class="span9">
+          {{outlet}}
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" id="assets/index">
+        <div class="span9">
+          {{loc _assetsindex}}
+        </div>
+  </script>
+
+
+  <script type="text/x-handlebars" id="assets/asset">
+    <h4>{{loc _asset}}: {{name}}</h4>
+   <div class="row-fluid">
+      <div class="span6">
+	<!-- data -->
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _name}}:</p></div>
+	  <div class="span9">
+	       {{#if isEditing}}
+	         {{view Ember.TextField valueBinding="name"}}
+	         <span class="label label-success popup-marker" data-content="{{loc _pop_name}}" data-original-title="{{loc _pop_title}}">?</span>
+	       {{else}}
+	         {{name}}
+	    {{/if}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _uri}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="uri"}}
+	       <span class="label label-success popup-marker" data-content="{{loc _pop_uri}}" data-original-title="{{loc _pop_title}}">?</span>
+	    {{else}}
+	      {{uri}}
+	    {{/if}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _login}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="login"}}
+	      <span class="label label-success popup-marker" data-content="{{loc _pop_login}}" data-original-title="{{loc _pop_title}}">?</span>
+	    {{else}}
+	      {{login}}
+	    {{/if}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _pass}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="password"}}
+	      <span class="label label-success popup-marker" data-content="{{loc _pop_pass}}" data-original-title="{{loc _pop_title}}">?</span>
+	    {{else}}
+	      {{password}}
+	    {{/if}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _mail}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="mail"}}
+	      <span class="label label-success popup-marker" data-content="{{loc _pop_mail}}" data-original-title="{{loc _pop_title}}">?</span>
+	    {{else}}
+	      {{mail}}
+	    {{/if}}
+	  </div>
+	</div>
+	{{#if isEditing}}
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _successor}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.Select selectionBinding="successor"
+	                        contentBinding="successors" 
+	                        optionValuePath="content.id"
+                                optionLabelPath="content.name"}}
+	    {{errors.successor}}
+	    <span class="label label-success popup-marker" data-content="{{loc _pop_successor}}" data-original-title="{{loc _pop_title}}">?</span>
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _ordered}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.Select selectionBinding="order"
+	                        contentBinding="orders"
+	                        optionValuePath="content.id" 
+                                optionLabelPath="content.name"
+	    }}
+	    {{errors.order}}
+	    <span class="label label-success popup-marker" data-content="{{loc _pop_order}}" data-original-title="{{loc _pop_title}}">?</span>
+	  </div>
+	</div>
+	{{/if}}
+	<div class="row-fluid">
+	  <div class="span6">
+	    {{#if isEditing}}
+	      <button class="btn btn-primary btn-default" {{action doneEditing}}>{{loc _save}}</button>
+	      <button class="btn btn-primary btn-default" {{action cancelEditing}}>{{loc _cancel}}</button>
+	    {{else}}
+	      <button class="btn btn-primary btn-default" {{action edit}}>{{loc _edit}}</button>
+	      <button class="btn btn-primary btn-default" {{action remove}}>{{loc _remove}}</button>
+	    {{/if}}
+	  </div>
+	</div>
+      </div> <!-- formular end -->
+      <div class="span6">
+	<!-- successor display -->
+	{{#if isEditing}}
+	<div class="row-fluid">
+	  <div class="span12">
+	    <h4>{{loc _notes}}:</h4>
+	    {{view Ember.TextArea valueBinding="notes" rows="10" cols="80"}}
+	  </div>
+	</div>
+	{{else}}	
+	<div class="row-fluid">
+	  <div class="span12"><h4>{{loc _successor}}</h4></div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _name}}:</p></div>
+	  <div class="span9">
+	    {{successor.name}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _address}}:</p></div>
+	  <div class="span9">
+	    {{successor.address}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _birth}}:</p></div>
+	  <div class="span9">
+	    {{successor.birth}}
+	  </div>
+	</div>
+	{{#if successor.name2}}
+	    <div class="row-fluid">
+	      <div class="span12"><h4>{{loc _substitute}}</h4></div>
+	    </div>
+	    <div class="row-fluid">
+	      <div class="span3"><p>{{loc _name}}:</p></div>
+	      <div class="span9">
+		{{successor.name2}}
+	      </div>
+	    </div>
+	    <div class="row-fluid">
+	      <div class="span3"><p>{{loc _address}}:</p></div>
+	      <div class="span9">
+		{{successor.address2}}
+	      </div>
+	    </div>
+	    <div class="row-fluid">
+	      <div class="span3"><p>{{loc _birth}}:</p></div>
+	      <div class="span9">
+		{{successor.birth2}}
+	      </div>
+	    </div>
+	  {{/if}}
+	{{#if order}}
+	<div class="row-fluid">
+	  <div class="span12">
+	    {{loc _preordered}} <strong>{{order.name}}</strong> {{loc _postordered}}.
+	  </div>
+	</div>
+	{{/if}}
+	{{#if notes}}
+	<div class="row-fluid">
+	  <div class="span12">
+	    <h4>{{loc _notes}}:</h4>
+	    {{notes}}
+	  </div>
+	</div>
+	{{/if}}
+	{{/if}}
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" id="assets/new">
+    <h4>{{loc _addasset}}</h4>
+    <div class="row-fluid">
+      <div class="span7">
+	<!-- formular -->
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _name}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="name"}}
+	    <span class="label label-success popup-marker" data-content="{{loc _pop_name}}" data-original-title="{{loc _pop_title}}">?</span>
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _uri}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="uri"}}
+	    <span class="label label-success popup-marker" data-content="{{loc _pop_uri}}" data-original-title="{{loc _pop_title}}">?</span>
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _login}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="login"}}
+	    <span class="label label-success popup-marker" data-content="{{loc _pop_login}}" data-original-title="{{loc _pop_title}}">?</span>
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _pass}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="password"}}
+	    <span class="label label-success popup-marker" data-content="{{loc _pop_pass}}" data-original-title="{{loc _pop_title}}">?</span>
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _mail}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="mail"}}
+	    <span class="label label-success popup-marker" data-content="{{loc _pop_mail}}" data-original-title="{{loc _pop_title}}">?</span>
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _successor}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.Select selectionBinding="successor"
+	                        contentBinding="successors" 
+	                        optionValuePath="content.id"
+	                        valueBinding="controller.selected_successor"
+                                optionLabelPath="content.name"
+	    }}
+	    {{errors.successor}}
+	    <span class="label label-success popup-marker" data-content="{{loc _pop_successor}}" data-original-title="{{loc _pop_title}}">?</span>
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _ordered}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.Select selectionBinding="order"
+	                        contentBinding="orders"
+	                        optionValuePath="content.id"
+                                optionLabelPath="content.name"
+	                        valueBinding="controller.selected_order"
+	    }}
+	    {{errors.order}}
+	    <span class="label label-success popup-marker" data-content="{{loc _pop_order}}" data-original-title="{{loc _pop_title}}">?</span>
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span12">
+	    <button class="btn btn-primary btn-default" {{action 'createAsset'}}>{{loc _save}}</button>
+	    <button class="btn btn-primary btn-default" {{action 'createNextAsset'}}>{{loc _savenext}}</button>
+	  </div>
+	</div>
+      </div> <!-- formular end -->
+      <div class="span5">
+	<!-- formular continued -->
+	<div class="row-fluid">
+	  <div class="span12">
+	    <h4>{{loc _notes}}:</h4>
+	    {{view Ember.TextArea valueBinding="notes" rows="10" cols="80"}}
+	  </div>
+	</div>
+      </div>
+    </div>
+  </script>
+
+
+
+
+
+
+
+
+
+<!-- <img class="addicon" src="" alt="" /> -->
+
+
+
+
+  <script type="text/x-handlebars" id="successors">
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3 bs-docs-sidebar">
+	  <ul class="nav nav-list  bs-docs-sidenav">
+	    <li class="nav-header"><h4>{{loc _successors}} {{#linkTo 'successors.new'}}<span class="addicon">&nbsp;<!--[if IE]>{{loc _add}}<![endif]--></span>{{/linkTo}}</h4></li>
+	    {{#each model}}
+	      {{#view App.NavView}}{{#linkTo 'successors.successor' this}}{{name}}{{/linkTo}}{{/view}}
+	    {{/each}}
+	  </ul>
+        </div>
+        <div class="span9">
+          {{outlet}}
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" id="successors/index">
+        <div class="span9">
+          {{loc _successorsindex}}
+        </div>
+  </script>
+
+
+
+
+  <script type="text/x-handlebars" id="successors/successor">
+   <h4>{{loc _successor}}: {{name}}</h4>
+   <div class="row-fluid">
+      <div class="span6">
+	<!-- data -->
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _name}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="name"}} <span style="color: red">{{errors.name}}</span>
+	    {{else}}
+	      {{name}}
+	    {{/if}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _address}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="address"}}
+	    {{else}}
+	      {{address}}
+	    {{/if}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _birth}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="birth"}}
+	    {{else}}
+	      {{birth}}
+	    {{/if}}
+	  </div>
+	</div>
+
+	<div class="row-fluid">
+	  <div class="span6">
+	    {{#if isEditing}}
+	      <button class="btn btn-primary btn-default" {{action doneEditing}}>{{loc _save}}</button>
+	      <button class="btn btn-primary btn-default" {{action cancelEditing}}>{{loc _cancel}}</button>
+	    {{else}}
+	      <button class="btn btn-primary btn-default" {{action edit}}>{{loc _edit}}</button>
+	      <button class="btn btn-primary btn-default" {{action remove}}>{{loc _remove}}</button>
+	    {{/if}}
+	  </div>
+	</div>
+      </div> <!-- formular end -->
+      <div class="span6">
+	<!-- substitute successor form -->
+	{{#if isEditing}}
+	<div class="row-fluid">
+	  <div class="span12"><h4>{{loc _substitute}}</h4></div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _name}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="name2"}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _address}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="address2"}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _birth}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="birth2"}}
+	  </div>
+	</div>
+	{{else}}
+	  {{#if name2}}
+	    <div class="row-fluid">
+	      <div class="span12"><h4>{{loc _substitute}}</h4></div>
+	    </div>
+	    <div class="row-fluid">
+	      <div class="span3"><p>{{loc _name}}:</p></div>
+	      <div class="span9">
+		{{name2}}
+	      </div>
+	    </div>
+	    <div class="row-fluid">
+	      <div class="span3"><p>{{loc _address}}:</p></div>
+	      <div class="span9">
+		{{address2}}
+	      </div>
+	    </div>
+	    <div class="row-fluid">
+	      <div class="span3"><p>{{loc _birth}}:</p></div>
+	      <div class="span9">
+		{{birth2}}
+	      </div>
+	    </div>
+	  {{/if}}
+	{{/if}}
+      </div>
+  </script>
+
+
+
+
+  <script type="text/x-handlebars" id="successors/new">
+    <h4>{{loc _addsuccessor}}</h4>
+    <div class="row-fluid">
+      <div class="span7">
+	<!-- formular -->
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _name}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="name"}} <span style="color: red">{{errors.name}}</span>
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _address}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="address"}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _birth}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="birth"}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span12">
+	    <button class="btn btn-primary btn-default" {{action 'createSuccessor'}}>{{loc _save}}</button>
+	    <button class="btn btn-primary btn-default" {{action 'createNextSuccessor'}}>{{loc _savenext}}</button>
+	  </div>
+	</div>
+      </div> <!-- formular end -->
+      <div class="span5">
+	<!-- substitute successor -->
+	<div class="row-fluid">
+	  <div class="span12"><h4>{{loc _substitute}}</h4></div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _name}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="name2"}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _address}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="address2"}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _birth}}:</p></div>
+	  <div class="span9">
+	    {{view Ember.TextField valueBinding="birth2"}}
+	  </div>
+	</div>
+      </div>
+    </div>
+  </script>
+
+
+ <script type="text/x-handlebars" id="testament">
+   <div class="row-fluid">
+     {{#if notempty}}
+       {{#if self.password}}
+        <div class="span12 hidden-print">
+          <p>{{loc _print}} <a href="http://www.howtogeek.com/howto/the-geek-blog/prevent-firefox-or-internet-explorer-from-printing-the-url-on-every-page/">setup browser</a></p>
+          <button class="btn btn-primary btn-large" onClick="window.print()">{{loc _doprint}}</button>
+	</div>
+	{{else}}
+	  <div class="span4 hidden-print">
+	    {{loc _testamentempty}}{{#linkTo 'successors.new'}}{{loc _addsuccessor}}{{/linkTo}}
+	  </div>
+	{{/if}}
+     {{else}}
+	<div class="span4 hidden-print">
+	  {{loc _testamentempty}}{{#linkTo 'successors.new'}}{{loc _addsuccessor}}{{/linkTo}}
+	</div>
+     {{/if}}
+   </div>
+   <div class="row-fluid">
+     <div class="span12">
+       {{#if notempty}}
+       {{#if self.password}}
+       <p class="pr-toptitle">{{loc _ttitle}}</p>
+       {{#each successor in successors}}
+        {{#if successor.has_assets}}
+          <p class="pr-text">{{loc _appoint1}}{{self.name}} ({{self.birth}}, {{self.address}}){{loc _appoint2}}</p>
+	  <p>
+	    <span class="pr-title">{{successor.name}}:</span><br/>
+	    <span class="pr-text">
+	      {{#if successor.address}}{{successor.address}}<br/>{{/if}}
+	      {{#if successor.birth}}{{loc _birth}}: {{successor.birth}}{{/if}}
+	    </span>
+	    {{#if successor.name2}}
+	       </p>
+               <p class="pr-text">{{loc _appoint2}}</p>
+               <p>
+	         <span class="pr-title">{{successor.name2}}:</span><br/>
+	         <span class="pr-text">
+		    {{#if successor.address2}}{{successor.address2}}<br/>{{/if}}
+		    {{#if successor.birth2}}{{loc _birth}}: {{successor.birth2}}{{/if}}
+		 </span>
+	     {{/if}}
+	     <p class="pr-text">{{loc _successorshall}}</p>
+          </p>
+	    {{#each asset in successor.assets}}
+	      <p class="pr-title">{{loc _asset}}: <strong>{{asset.name}}</strong></span>
+	      <table class="table ">
+		<tr><th width="15%" class="pr-label">{{loc _uri}}</th><td>{{asset.uri}}</td></tr>
+		<tr><th class="pr-label">{{loc _login}}</th><td class="pr-data">{{asset.login}}</td></tr>
+		<tr><th class="pr-label">{{loc _pass}}</th><td  class="pr-data">{{asset.password}}</td></tr>
+		<tr><th class="pr-label">{{loc _mail}}</th><td class="pr-data">{{asset.mail}}</td></tr>
+		<tr><th class="pr-label">{{loc _notes}}</th><td class="pr-data">{{asset.notes}}</td></tr>
+		<tr><td colspan="2" class="pr-text">
+		    {{loc _preordered}} <strong>{{asset.order.name}}</strong>
+		    {{loc _postordered}}.</td></tr>
+	      </table>
+	      <!--<div style="page-break-before:always"></div>-->
+	    {{/each}}
+       <p><strong>{{loc _date}}</strong>: {{date now}}</p>
+       <p><strong>{{loc _place}}</strong>:</p>
+       <p><strong>{{loc _sign}}</strong>:</p>
+       {{/if}}
+    {{/each}}     <!-- end each successor -->
+    {{/if}} <!-- end if self.haspasswd -->
+    {{/if}} <! -- end if notempty -->
+     </div>
+   </div>
+ </script>
+
+  <script type="text/x-handlebars" id="self">
+   <div class="row-fluid">
+      <div class="span12">
+	<h4>{{loc _selftitle}}</h4>
+	<!-- data -->
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _name}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="name"}} <span style="color: red">{{errors.name}}</span>
+	    {{else}}
+	      {{name}}
+	    {{/if}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _address}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="address"}} <span style="color: red">{{errors.address}}</span>
+	    {{else}}
+	      {{address}}
+	    {{/if}}
+	  </div>
+	</div>
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _birth}}:</p></div>
+	  <div class="span9">
+	    {{#if isEditing}}
+	      {{view Ember.TextField valueBinding="birth"}} <span style="color: red">{{errors.birth}}</span>
+	    {{else}}
+	      {{birth}}
+	    {{/if}}
+	  </div>
+	</div>
+	{{#if isEditing}}
+	<div class="row-fluid">
+	  <div class="span3"><p>{{loc _pass}}:</p></div>
+	  <div class="span9">
+	      {{view Ember.TextField valueBinding="password" type="password"}} <span style="color: red">{{errors.password}}</span>
+	  </div>
+	</div>
+	{{/if}}
+	<div class="row-fluid">
+	  <div class="span6">
+	    {{#if isEditing}}
+	      <button class="btn btn-primary btn-default" {{action doneEditing}}>{{loc _save}}</button>
+	      <button class="btn btn-primary btn-default" {{action cancelEditing}}>{{loc _cancel}}</button>
+	    {{else}}
+	      <button class="btn btn-primary btn-default" {{action edit}}>{{loc _edit}}</button>
+	    {{/if}}
+	  </div>
+	</div>
+      </div> <!-- formular end -->
+  </script>
+
+  <script type="text/x-handlebars" id="data">
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3 bs-docs-sidebar">
+	  <ul class="nav nav-list  bs-docs-sidenav">
+	    <li class="nav-header"><h4>{{loc _data}}</h4></li>
+	    {{#view App.NavView}}{{#linkTo 'data.export'}}{{loc _export}}{{/linkTo}}{{/view}}
+	    {{#view App.NavView}}{{#linkTo 'data.import'}}{{loc _import}}{{/linkTo}}{{/view}}
+	  </ul>
+        </div>
+        <div class="span9">
+          {{outlet}}
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" id="data/index">
+    <h4>{{loc _data}}</h4>
+    <p>{{loc _dataindex}}</p>
+  </script>
+
+
+
+  <script type="text/x-handlebars" id="data/export">
+   <h4>{{loc _export}}</h4>
+   {{#if self.password}}
+   <p>{{loc _exporthelp}}</p>
+   <div id="rawjson" style="display: none">
+     {
+       "successors": [
+     {{#each successor in successors}}
+       {{successor.toJson}},
+     {{/each}}
+        ],
+        "assets": [
+     {{#each asset in assets}}
+        {{asset.toJson}},
+     {{/each}}
+        ],
+        "self": {{self.toJson}}
+     }
+   </div>
+   <div id="rawdata" style="display: none"></div>
+   <div id="rawp" style="display: none">{{self.password}}</div>
+   <button class="btn btn-primary btn-default" {{action download}}>{{loc _download}}</button>
+     {{else}}
+       {{loc _nopasswd}}: {{#linkTo 'self'}}{{loc _self}}{{/linkTo}}.
+     {{/if}}
+  </script>
+
+  <script type="text/x-handlebars" id="data/import">
+   <h4>{{loc _import}}</h4>
+   {{#if isEditing}}
+   <div class="row-fluid">
+     <div class="span4">
+       <p>{{loc _importhelp}}</p>
+     </div>
+     <div class="span8">
+       {{view Ember.TextArea valueBinding="importdata" rows="10" cols="80"}}
+     </div>
+   </div>
+
+   <div class="row-fluid">
+     <div class="span4">
+       <p>{{loc _up_file}}</p>
+     </div>
+     <div class="span8">
+       <!--
+	   via http://jasny.github.io/bootstrap/javascript.html#fileupload
+	 -->
+       <div class="fileupload fileupload-new" data-provides="fileupload">
+	 <div class="input-append">
+	   <div class="uneditable-input span3">
+	     <i class="icon-file fileupload-exists"></i>
+	     <span class="fileupload-preview"></span>
+	   </div>
+	   <span class="btn btn-file">
+	     <span class="fileupload-new">{{loc _up_select}}</span>
+	     <span class="fileupload-exists">{{loc _up_change}}</span>
+	     {{view App.UploadFileView name="import" contentBinding="content"}}
+	   </span>
+	   <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">{{loc _up_remove}}</a>
+	 </div>
+       </div>
+     </div>
+   </div>
+   
+   <div class="row-fluid">
+     <div class="span4">
+       <p>{{loc _importpass}}</p>
+     </div>
+     <div class="span8">
+       {{view Ember.TextField valueBinding="password" type="password"}} <span style="color: red">{{errors.password}}</span>
+     </div>
+   </div>
+
+   <div class="row-fluid">
+     <div class="span12">
+       <button class="btn btn-primary btn-default" {{action doneEditing}}>{{loc _import}}</button>
+     </div>
+   </div>
+   {{else}}
+     <p>{{clear}}</p>
+     <p><button class="btn btn-primary btn-default" {{action repeatEditing}}>{{loc _importagain}}</button></p>
+   {{/if}}
+  </script>
+
+  <script type="text/x-handlebars" id="data/done">
+   <h4>{{loc _import}}</h4>
+   <p>{{clear}}</p>
+   <p>{{controller}}</p>
+  </script>
+
+
+  <script src="js/libs/globals.js"></script>
+  <script src="js/libs/jquery.js"></script>
+  <script src="js/libs/handlebars.js"></script>
+  <script src="js/libs/ember.js"></script>
+  <script src="js/libs/ember-data.js"></script>
+  <script src="js/libs/localstorage_adapter.js"></script>
+  <script src="js/libs/moment.js"></script>
+
+  <script src="js/libs/aes.js"></script>
+  <script src="js/libs/sha512.js"></script>
+  <script src="js/libs/hmac-sha512.js"></script>
+
+  <script src="js/libs/blob.js"></script>
+  <script src="js/libs/filesaver.js"></script>
+  <script src="js/libs/bootstrap-fileupload.js"></script>
+  <script src="js/libs/bootstrap-tooltip.js"></script>
+  <script src="js/libs/bootstrap-popover.js"></script>
+  <script src="js/libs/json3.js"></script>
+  <script src="js/libs/version.js"></script>
+
+  <script src="js/init.js"></script>
+  <script src="js/locale.js"></script>
+  <script src="js/mixins.js"></script>
+  <script src="js/models.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/apphelpers.js"></script>
+  <script src="js/controllers_asset.js"></script>
+  <script src="js/controllers_index.js"></script>
+  <script src="js/controllers_self.js"></script>
+  <script src="js/controllers_successor.js"></script>
+  <script src="js/controllers_data.js"></script>
+  <script src="js/controllers_testament.js"></script>
+  <script src="js/controllers_about.js"></script>
+  <script src="js/handlebars_helpers.js"></script> 
+
+</body>
