@@ -1,8 +1,0 @@
-- wenn man beim Neuanlegen eines Assets die beiden
-  Selects (Successor und Order) so lässt wie sie sind,
-  wird null eingetragen, das Asset taucht nicht im 
-  Testament auf, successor.has_assets returned 0
-  und das bleibt auch so, wenn man das Asset nach-
-  träglich ändert.
-  
-  Supposed Fix: Validate New Asset order+successor.

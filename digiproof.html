@@ -3288,7 +3288,7 @@ Index=Source=null;return callback&&getClass.call(callback)==functionClass?walk((
 if(isLoader){define(function(){return JSON3;});}}(this));</script>
 <script type="text/javascript">
 /* js from js/libs/version.js */
-var VERSION="2013-09-12-232232"</script>
+var VERSION="2013-09-13-080748"</script>
 <script type="text/javascript">
 /* js from js/init.js */
 App=Ember.Application.create({});$(document).ready(function(){$('.popup-marker').popover({html:true,trigger:'hover'}).click(function(e){$('.popup-marker').not(this).popover('hide');$(this).popover('toggle');});$(document).click(function(e){if(!$(e.target).is('.popup-marker, .popover-title, .popover-content')){$('.popup-marker').popover('hide');}});});</script>
@@ -3374,7 +3374,8 @@ return JSON.stringify({id:this.get('id'),name:this.get('name'),uri:this.get('uri
 <script type="text/javascript">
 /* js from js/store.js */
 App.store=DS.Store.createWithMixins({revision:12,adapter:DS.LSAdapter.create({namespace:'digiproof'}),init:function(){this._super();this.loadMany(App.Import,[{'id':0,'importdata':''}]);if(lang==='de'){this.loadMany(App.Order,[{'id':0,'name':'weiter zu betreiben'},{'id':1,'name':'zu kündigen'},{'id':2,'name':'zu übertragen'},{'id':3,'name':'nach Gutdünken abzuwickeln'},]);this.loadMany(App.Successor,[{'id':0,'name':'Mein(e) regulären Erbe(n)'}]);}
-else{this.loadMany(App.Order,[{'id':0,'name':'maintain'},{'id':1,'name':'liquidate'},{'id':2,'name':'transfer'},{'id':3,'name':'decide herself'},]);this.loadMany(App.Successor,[{'id':0,'name':'My regular legal succesor(s)'}]);}}});</script>
+else{this.loadMany(App.Order,[{'id':0,'name':'maintain'},{'id':1,'name':'liquidate'},{'id':2,'name':'transfer'},{'id':3,'name':'decide herself'},]);this.loadMany(App.Successor,[{'id':0,'name':'My regular legal succesor(s)'}]);}
+this.commit();}});</script>
 <script type="text/javascript">
 /* js from js/router.js */
 App.Router.map(function(){this.resource('assets',function(){this.route('asset',{path:':asset_id'});this.route('new');});this.resource('successors',function(){this.route('successor',{path:':successor_id'});this.route('new');});this.route('self');this.route('testament');this.route('about');this.resource('data',function(){this.route('export');this.route('import');});});App.AssetsRoute=Ember.Route.extend({model:function(){return App.Asset.find();}});App.SelfRoute=Ember.Route.extend({setupController:function(controller){controller.set('model',App.Self.find(0));}});App.DataImportRoute=Ember.Route.extend({setupController:function(controller){controller.set('model',App.Import.find(0));}});App.SuccessorsRoute=Ember.Route.extend({model:function(){return App.Successor.find();}});</script>

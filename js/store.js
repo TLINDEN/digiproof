@@ -29,5 +29,6 @@ App.store = DS.Store.createWithMixins({
 			 );
 	    this.loadMany(App.Successor, [{ 'id': 0, 'name': 'My regular legal succesor(s)' }]);
 	}
+	this.commit();
     }
 });
