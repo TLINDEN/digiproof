@@ -3,6 +3,7 @@ App.IndexController = Ember.Controller.extend({
     has_self:      App.Self.find(),
     has_asset:     App.Asset.find(),
     has_successor: App.Successor.find(),
+    isDevel: isDevel,
     VERSION: VERSION
 });
 

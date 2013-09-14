@@ -126,6 +126,7 @@ App.UploadFileView = Ember.TextField.extend({
 App.DataImportController = Ember.ObjectController.extend({
     isEditing: true,
     clear: '',
+    failed: false,
     errors: {},
 
     doneEditing: function() {
@@ -197,6 +198,15 @@ App.DataImportController = Ember.ObjectController.extend({
 		    // suck it in
 		    ImportJSON(importobj, pass);
 		    this.set('clear', translate('_importdone'));
+		    var isuccessors = [];
+		    $.each(importobj.successors, function(index, obj) {
+			if(obj.id != '0') {
+			    isuccessors.pushObject(obj);
+			}
+		    });
+		    this.set('successors', isuccessors);
+		    this.set('assets',     importobj.assets);
+		    this.set('self',       importobj.self);		    
 		}
 		else {
 		    throw 'decrypted variable $json doesnt contain anything, weird';
@@ -205,12 +215,14 @@ App.DataImportController = Ember.ObjectController.extend({
  	    catch (e) {
 		// console.log("decryption exception: %o", e);
 		this.set('clear', translate('_error_decrypt') + " (" + e + ")");
+		this.set('failed', true);
 	    }
 	}
 	else {
 	    // no password given
 	    this.set('isEditing', true);
 	    this.set('errors', validated);
+	    this.set('failed', true);
 	    this.set('clear', translate('_error_decrypt'));
 	}
     },

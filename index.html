@@ -15,16 +15,22 @@
   <script type="text/x-handlebars">
     <div class="navbar hidden-print">
       <div class="navbar-inner">
-        <a class="brand" href="#">DigiProof</a>
-        <ul class="nav">
-	  <li>{{#linkTo 'self'}}{{loc _self}}{{/linkTo}}</li>
-	  <li>{{#linkTo 'successors'}}{{loc _successors}}{{/linkTo}}</li>
-          <li>{{#linkTo 'assets'}}{{loc _assets}}{{/linkTo}}</li>
-	  <li>{{#linkTo 'testament'}}{{loc _testament}}{{/linkTo}}</li>
-	  <li>{{#linkTo 'data'}}{{loc _data}}{{/linkTo}}</li>
-	  <li>{{#linkTo 'about'}}{{loc _aboutmenu}}{{/linkTo}}</li>
-        </ul>
-	<span class="pull-right">digiproof version {{VERSION}}</span>
+	<div class="nav-collapse">
+          <a class="brand" href="#">DigiProof</a>
+          <ul class="nav">
+	    <li>{{#linkTo 'self'}}{{loc _self}}{{/linkTo}}</li>
+	    <li>{{#linkTo 'successors'}}{{loc _successors}}{{/linkTo}}</li>
+            <li>{{#linkTo 'assets'}}{{loc _assets}}{{/linkTo}}</li>
+	    <li>{{#linkTo 'testament'}}{{loc _testament}}{{/linkTo}}</li>
+	    <li>{{#linkTo 'data'}}{{loc _data}}{{/linkTo}}</li>
+	    <li>{{#linkTo 'about'}}{{loc _aboutmenu}}{{/linkTo}}</li>
+          </ul>
+	  {{#if isDevel}}
+	  <div class="pull-right img-rounded dpedge-devel">digiproof development version {{VERSION}}</div>
+	  {{else}}
+	  <div class="pull-right img-rounded dpedge-prod">digiproof version {{VERSION}}</div>
+	  {{/if}}
+	</div>
       </div>
     </div>
     {{outlet}}
@@ -67,6 +73,12 @@
 	    </li>
 	  </ol>
 	</div>
+	{{#if isDevel}}
+	<div class="span4">
+	  <h4>Development Version</h4>
+	  <p style="color: #ff8a00">{{loc _devel}}</p>
+	</div>
+	{{/if}}
       </div>
     </div>
   </script>
@@ -776,7 +788,31 @@
      </div>
    </div>
    {{else}}
-     <p>{{clear}}</p>
+     {{#if failed}}
+        <p>{{clear}}</p>
+     {{else}}
+	<div class="row-fluid">
+	  <div class="span2">{{loc _self}}:</div>
+	  <div class="span2"><b>{{self.name}}</b></div>
+	  <div class="span2">{{clear}}</div>
+	</div>
+
+	  {{#each successor in successors}}
+	    <div class="row-fluid">
+	      <div class="span2">{{loc _successor}}:</div>
+	      <div class="span2"><b>{{successor.name}}</b></div>
+	      <div class="span2">{{clear}}</div>
+	    </div>
+	  {{/each}}
+	  {{#each asset in assets}}
+	    <div class="row-fluid">
+	      <div class="span2">{{loc _asset}}:</div>
+	      <div class="span2"><b>{{asset.name}}</b></div>
+	      <div class="span2">{{clear}}</div>
+	    </div>
+	  {{/each}}
+	</ul>
+     {{/if}}
      <p><button class="btn btn-primary btn-default" {{action repeatEditing}}>{{loc _importagain}}</button></p>
    {{/if}}
   </script>
@@ -784,7 +820,6 @@
   <script type="text/x-handlebars" id="data/done">
    <h4>{{loc _import}}</h4>
    <p>{{clear}}</p>
-   <p>{{controller}}</p>
   </script>
 
 
@@ -793,7 +828,7 @@
   <script src="js/libs/handlebars.js"></script>
   <script src="js/libs/ember.js"></script>
   <script src="js/libs/ember-data.js"></script>
-  <script src="js/libs/localstorage_adapter.js"></script>
+  <script src="js/libs/localstorage_adapter_dev.js"></script>
   <script src="js/libs/moment.js"></script>
 
   <script src="js/libs/aes.js"></script>
@@ -817,6 +852,7 @@
   <script src="js/apphelpers.js"></script>
   <script src="js/controllers_asset.js"></script>
   <script src="js/controllers_index.js"></script>
+  <script src="js/controllers_application.js"></script>
   <script src="js/controllers_self.js"></script>
   <script src="js/controllers_successor.js"></script>
   <script src="js/controllers_data.js"></script>

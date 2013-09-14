@@ -113,7 +113,10 @@ window.locale = {
 	    +"into the notes field below.",
 	"_aboutmenu": "About Digiproof",
 	"_about": "This is DigiProof, a JavaScript App to create a digital testament by Thomas Linden. Copyright (c) 2013. "
-	    +"Licensed under the terms of the General Public License Version 2."
+	    +"Licensed under the terms of the General Public License Version 2.",
+	"_devel": "Caution! This is the development version of DigiProof. It stores data to local disk using the browsers "
+	    +"localStorage feature. So, whatever you enter, persists over sessions, is unencrypted and can be viewed by anyone "
+	    +"with access to this device. Use for testing/developing purposes only and don't ever enter production account informations!"
     },
 
     "de": {
@@ -233,7 +236,11 @@ window.locale = {
 	    +"dazugehörige Ergänzungen hinzufügen.",
 	"_aboutmenu": "Über Digiproof",
 	"_about": "Dies ist DigiProof, eine Javascript App zum Erstellen eines digitalen Testaments von Thomas Linden. Copyright (c) 2013. "
-	    +"Veröffentlicht unter der General Public License Version 2."
+	    +"Veröffentlicht unter der General Public License Version 2.",
+	"_devel": "Achtung! Dies ist die Entwicklerversion von DigiProof. Eingegebene Daten werden auf der lokalen Festplatte "
+	    +"unter Verwendung des localStorage Features Ihres Browsers gespeichert. Was immer Sie eingeben, bleibt über Browsersitzungen "
+	    +"hinweg erhalten, ist nicht verschlüsselt und kann von jedem mit Zugriff auf das System gelesen werden. Verwenden Sie "
+	    +"diese Version ausschliesslich für Test- oder Entwicklungszwecke und geben Sie niemals echte Accountinformationen ein!"
     }
 };
 

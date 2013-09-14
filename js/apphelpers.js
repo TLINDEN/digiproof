@@ -74,3 +74,4 @@ function decode64(input) {
     
     return unescape(output);
 }
+
