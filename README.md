@@ -43,7 +43,7 @@ This is the main screen of the app:
 Here we entered some asset data (german language version):
 ![network asset](https://github.com/TLINDEN/digiproof/blob/master/samples/digiproof10.png?raw=true)
 
-[Here is a sample printed testament](https://github.com/TLINDEN/digiproof/blob/master/samples/sample-testament.pdf).
+[Here is a sample printed testament](https://github.com/TLINDEN/digiproof/blob/master/samples/sample-testament.pdf?raw=true).
 
 More screenshots can be found in the [samples](https://github.com/TLINDEN/digiproof/tree/master/samples)
 directory.
