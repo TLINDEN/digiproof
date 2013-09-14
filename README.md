@@ -7,10 +7,12 @@ This is an javascript app which allows you to create and maintain a digital test
 
 **This is BETA software, use on your own risk.**
 
-If you want to try it, download the [standalone file digiproof-prod](digiproof-prod.html),
+If you want to try it, download the
+[standalone file digiproof-prod](https://raw.github.com/TLINDEN/digiproof/master/digiproof-prod.html),
 save it to your disk and open it locally in your browser.
 
-There's also a [development version](digiproof-dev.html), which retains all data across
+There's also a [development version](https://github.com/TLINDEN/digiproof/blob/master/digiproof-dev.html?raw=true),
+which retains all data across
 browser sessions. This version does store any entered data unencrypted using the
 [localStorage adapter for ember.js](https://github.com/rpflorence/ember-localstorage-adapter).
 **So, please do not enter any production data into the development version!**
