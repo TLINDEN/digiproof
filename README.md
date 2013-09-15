@@ -34,6 +34,16 @@ Features
 - localisation support. currently german and english are fully supported.
 - full browser support, tested with IE 8, firefox and google chrome.
 
+Installation
+============
+
+Download the standalone self contained app to your computer
+by right-clicking the following link and selecting "save as ...":
+[standalone file digiproof-prod](https://raw.github.com/TLINDEN/digiproof/master/digiproof-prod.html).
+
+Then open the file locally either by double clicking it from
+your filemanager or opening it from your browser (File => Open ...).
+
 Screenshots
 ===========
 
