@@ -1,5 +1,60 @@
-var lang = (navigator.language) ? navigator.language : navigator.userLanguage;
+/*
+ *
+ *  This  file  is part of  the digital testament   management program
+ *                           DigiProof.
+ *
+ *  By  accessing  this  software,  DigiProof, you are  duly  informed
+ *  of and agree to be bound by the conditions described below in this
+ *  notice:
+ *
+ *  This software product,  DigiProof,  is  developed by T. Linden and
+ *  copyrighted  (C)  2013  by  T. Linden,   with all rights reserved.
+ *
+ *  There is no charge for  DigiProof software.  You can  redistribute
+ *  it  and/or modify  it  under the terms  of the GNU  General Public
+ *  License, which is incorporated by reference herein.
+ *
+ *  DigiProof is distributed WITHOUT ANY WARRANTY, IMPLIED OR EXPRESS,
+ *  OF MERCHANTABILITY  OR FITNESS  FOR A  PARTICULAR PURPOSE  or that
+ *  the use of it will not infringe on any third party's  intellectual
+ *  property rights.
+ *
+ *  You should  have received a copy of the GNU General Public License
+ *  along with DigiProof. Copies can also be obtained from:
+ *
+ *    http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ *  or by writing to:
+ *
+ *    Free Software Foundation, Inc.
+ *    Inc., 51 Franklin Street, Fifth Floor
+ *    Boston, MA 02110-1301
+ *    USA
+ *
+ *  Or contact:
+ *
+ *    "T. Linden" <tlinden@cpan.org>
+ *
+ *  The sourcecode can be found on:
+ *
+ *    https://github.com/TLINDEN/digiproof
+ *
+ */
 
+
+/*
+ * All visible strings, that is, menus, help texts, form labels
+ * etc will be put here. The language to be used will be determined
+ * by what the browser tells us. If the language is known (that is,
+ * the locale is contained in our window.locale hash), it will just
+ * be used, otherwise a fallback to en-US will be done.
+ * Use from templates with {{loc _tag}} where tag is a key of the
+ * window.locale hash. 'loc' is a handlebars helper defined in
+ * handlebars_helpers.js
+ * Use from JS with translate(tag). translate() is defined here.
+ */
+
+var lang = (navigator.language) ? navigator.language : navigator.userLanguage;
 
 
 window.locale = {

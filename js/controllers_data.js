@@ -1,3 +1,52 @@
+/*
+ *
+ *  This  file  is part of  the digital testament   management program
+ *                           DigiProof.
+ *
+ *  By  accessing  this  software,  DigiProof, you are  duly  informed
+ *  of and agree to be bound by the conditions described below in this
+ *  notice:
+ *
+ *  This software product,  DigiProof,  is  developed by T. Linden and
+ *  copyrighted  (C)  2013  by  T. Linden,   with all rights reserved.
+ *
+ *  There is no charge for  DigiProof software.  You can  redistribute
+ *  it  and/or modify  it  under the terms  of the GNU  General Public
+ *  License, which is incorporated by reference herein.
+ *
+ *  DigiProof is distributed WITHOUT ANY WARRANTY, IMPLIED OR EXPRESS,
+ *  OF MERCHANTABILITY  OR FITNESS  FOR A  PARTICULAR PURPOSE  or that
+ *  the use of it will not infringe on any third party's  intellectual
+ *  property rights.
+ *
+ *  You should  have received a copy of the GNU General Public License
+ *  along with DigiProof. Copies can also be obtained from:
+ *
+ *    http://www.gnu.org/licenses/gpl-2.0.html
+ *
+ *  or by writing to:
+ *
+ *    Free Software Foundation, Inc.
+ *    Inc., 51 Franklin Street, Fifth Floor
+ *    Boston, MA 02110-1301
+ *    USA
+ *
+ *  Or contact:
+ *
+ *    "T. Linden" <tlinden@cpan.org>
+ *
+ *  The sourcecode can be found on:
+ *
+ *    https://github.com/TLINDEN/digiproof
+ *
+ */
+
+
+
+/*
+ * This controller is being used to data export and import.
+ * It handles the whole encryption/decryption of data.
+ */
 
 
 App.DataExportController = Ember.ArrayController.extend({
@@ -57,7 +106,7 @@ App.DataExportController = Ember.ArrayController.extend({
 	    hash = CryptoJS.SHA512(hash);
 	}
 
-	// fix comma syntax
+	// fix handlebars generated json output comma syntax
 	raw = raw.replace(/,\],/g, '],');
 	// console.log("raw: %s", raw);
 	var cr  = CryptoJS.AES.encrypt(escape(raw), hash.toString(CryptoJS.enc.Base64));
@@ -94,7 +143,9 @@ App.DataExportController = Ember.ArrayController.extend({
 
 
 
-
+/*
+ * Helper for file upload button in the data/import view.
+ */
 var UploadedImport = null;
 App.UploadFileView = Ember.TextField.extend({
     // WARN: this one gets fired as soon as the user selected a file
@@ -109,7 +160,7 @@ App.UploadFileView = Ember.TextField.extend({
             var that = this;
             reader.onload = function(e) {
 		var targ;
-		if (!e) var e = window.event;
+		if (!e) var e = window.event; // IE compatibility check
 		if (e.target) targ = e.target;
 		else if (e.srcElement) targ = e.srcElement;
 		if (targ.nodeType == 3) // defeat Safari bug

@@ -1,5 +1,3 @@
-var isDevel = true;
-
 DS.LSSerializer = DS.JSONSerializer.extend({
 
   addBelongsTo: function(data, record, key, association) {
